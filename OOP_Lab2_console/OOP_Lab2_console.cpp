@@ -319,7 +319,7 @@ int main()
 	delete(RectangleComposA);
 	//*/
 
-	///*
+	/*
 	Figure** arrF = new Figure*[2];
 	Point a(1, 2);
 	Point b(10, 20);
