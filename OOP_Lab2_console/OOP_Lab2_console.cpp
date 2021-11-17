@@ -86,16 +86,14 @@ public:
 	Figure(){
 		SetColor(Green, Black);
 		cout << "Figure Constructor\n";
-		//arr = nullptr;
 		SetColor(White, Black);
 	};
-	~Figure(){
+	virtual ~Figure(){
 		SetColor(Green, Black);
 		cout << "Figure Destructor\n";
 		SetColor(White, Black);
-		delete[](arr);
 	};
-	virtual void draw(int offset){};
+	virtual void draw(float startOffsetX = 0, float startOffsetY = 0){};
 };
 
 class Line : public Figure{
@@ -104,8 +102,8 @@ public:
 		SetColor(Red, Black);
 		cout << "Line Constructor\n";
 		arr = new Point[2];
-		arr[0] = new Point();
-		arr[1] = new Point();
+		arr[0] = Point();
+		arr[1] = Point();
 		SetColor(White, Black);
 	};
 	Line(const Point* a, const Point* b){
@@ -120,14 +118,15 @@ public:
 		SetColor(Red, Black);
 		cout << "Line Constructor\n";
 		arr = new Point[2];
-		arr[0] = new Point(a->arr[0]);
-		arr[1] = new Point(a->arr[1]);
+		arr[0] = Point(a->arr[0]);
+		arr[1] = Point(a->arr[1]);
 		SetColor(White, Black);
 	};
 	~Line(){
 		SetColor(Red, Black);
 		cout << "Line Destructor\n";
 		SetColor(White, Black);
+		delete[](arr);
 	};
 	double length(){
 		double length, width, height;
@@ -136,7 +135,8 @@ public:
 		length = sqrt(width*width + height*height);
 		return length;
 	}
-	void draw(float startOffsetX=0, float startOffsetY=0){
+	virtual void draw(float startOffsetX=0, float startOffsetY=0) override{
+		int yStart = getposY();
 		float step, offsetY, offsetX, signY, signX;
 		offsetX = abs(arr[0].GetX() - arr[1].GetX());
 		offsetY = abs(arr[0].GetY() - arr[1].GetY());
@@ -155,7 +155,7 @@ public:
 				cout << "*";
 			}
 		}
-		//goXY(0, step * offsetY);
+		goXY(0, yStart);
 	}
 };
 
@@ -195,23 +195,24 @@ public:
 		SetColor(Blue, Black);
 		cout << "Rectangle Destructor\n";
 		SetColor(White, Black);
+		delete[](arr);
 	};
-	void draw(int offset){
+	virtual void draw(float startOffsetX = 0, float startOffsetY = 0) override{
 		int minX, maxX, minY, maxY;
 		minX = this->arr[0].GetX();
 		maxX = this->arr[1].GetX();
 		minY = this->arr[0].GetY();
 		maxY = this->arr[1].GetY();
 		for(int i = minX; i < maxX; i++){
-			goXY(offset + i, minY);
+			goXY(startOffsetX + i, minY);
 			cout << "*";
-			goXY(offset + i, maxY);
+			goXY(startOffsetX + i, maxY);
 			cout << "*";
 		}
 		for(int i = minY; i < maxY; i++){
-			goXY(offset + minX, i);
+			goXY(startOffsetX + minX, i);
 			cout << "*";
-			goXY(offset + maxX, i);
+			goXY(startOffsetX + maxX, i);
 			cout << "*";
 		}
 		cout << "\n";
@@ -266,12 +267,12 @@ public:
 		delete(height);
 		SetColor(White, Black);
 	};
-	void draw(float offset){
+	virtual void draw(float startOffsetX = 0, float startOffsetY = 0) override{
 		int yStart = getposY();
-		width->draw(offset);
-		height->draw(offset);
-		width->draw(offset, height->length());
-		height->draw(offset + width->length());
+		width->draw(startOffsetX, startOffsetY);
+		height->draw(startOffsetX, startOffsetY);
+		width->draw(startOffsetX, startOffsetY + height->length());
+		height->draw(startOffsetX + width->length(), startOffsetY);
 		goXY(0, yStart);
 	}
 	double square(){
@@ -291,9 +292,7 @@ int main()
 	Line* LineA = new Line(&a, &b);
 	cout << "Length: " << (LineA->length()) << '\n';
 	LineA->draw(30);
-	cout << "\n";
 	delete(LineA);
-	cout << "\n";
 	//*/
 
 	/*
@@ -319,15 +318,39 @@ int main()
 	delete(RectangleComposA);
 	//*/
 
-	/*
+	//*
 	Figure** arrF = new Figure*[2];
 	Point a(1, 2);
 	Point b(10, 20);
 	arrF[0] = new Line(&a, &b);
 	arrF[1] = new MyRectangle(&a, &b);
-	arrF[0]->draw(30);
-	delete(arrF[0]);
-	delete(arrF[1]);
+	for(int i = 0; i < 2; i++){
+		arrF[i]->draw(40);
+		delete(arrF[i]);
+	};
 	delete[](arrF);
 	//*/
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+
+
+*/
